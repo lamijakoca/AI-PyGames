@@ -1,0 +1,1 @@
+# actions: NORTH, NE, EAST, SE, SOUTH, SW, WEST, NW
