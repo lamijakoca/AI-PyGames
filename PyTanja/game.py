@@ -8,7 +8,7 @@ class Game:
     def __init__(self):
         self.path_cost = 0
         pygame.display.set_caption("PyTanja")
-        #need to check
+        # load/run maps
         values = Game.load_map(sys.argv[1] if len(sys.argv) > 1 else os.path.join(configuration.MAPS_FOLDER, 'map0.txt'))
         self.char_map = values[0]
         self.start = values[1:3]
@@ -49,9 +49,7 @@ class Game:
             tile_map.append(map_row)
         self.tile_map = tile_map
         self.tilesSprites.add(Goal(self.goal[0], self.goal[1]))
-
-        # ili ostaviti da cita samo iz scope.py fajla ili napraviti da cita i iz agent foldera
-        module = __import__('scope')
+        # run agents
         module2 = __import__('agents')
         class_ = getattr(module2, sys.argv[2] if len(sys.argv) > 2 else 'ExampleAgent')
         self.agent = class_(self.start[0], self.start[1], f'{sys.argv[2]}.png' if len(sys.argv) > 2 else 'ExampleAgent.png')
@@ -66,6 +64,7 @@ class Game:
         path = self.agent.get_agent_path(self.tile_map, self.goal)
         original_path = [p for p in path]
         print(f"Path: {', '.join([str(p.position()) for p in path])}")
+        print(f"Path cost: {sum([trace.cost() for trace in path])}")
         tile = path.pop(0)
         x, y = tile.position()
         self.path_cost = tile.cost()
@@ -120,7 +119,9 @@ class Game:
     def draw(self):
         self.screen.fill(configuration.BLACK, rect=(0, configuration.HEIGHT, configuration.WIDTH, configuration.RIBBON_HEIGHT))
         self.tilesSprites.draw(self.screen)
+        # draw background around numbers (steps)
         self.trailsSprites.draw(self.screen)
+        # draw steps
         for t in self.trailsSprites:
             t.draw(self.screen)
         self.agentsSprites.draw(self.screen)
@@ -148,9 +149,15 @@ class Game:
         except Exception as ex:
             raise ex
 
+    def quit(self):
+        self.running = False
+
     def events(self):
+        # space - pokrenuti i zaustaviti
+        # enter = prikazati konacnu putanju do cilja
+        # esc - prekinuti i zatvoriti prozor
         for event in pygame.event.get():
-            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN:
+            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.quit()
             if self.game_over:
                 return
@@ -158,9 +165,6 @@ class Game:
                 self.playing = not self.playing
             elif event.type == pygame.KEYDOWN and event.key in(pygame.K_RETURN, pygame.K_KP_ENTER):
                 raise EndGame()
-
-    def quit(self):
-        self.running = False
             
 class EndGame(Exception):
     pass
