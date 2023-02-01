@@ -150,6 +150,7 @@ class Game:
             raise ex
 
     def quit(self):
+        self.game_over = True
         self.running = False
 
     def events(self):
