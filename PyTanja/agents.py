@@ -41,6 +41,7 @@ class ExampleAgent(Agent):
         return path
         
 # depth first search
+# stack
 class Aki(Agent):
     def __init__(self, row, col, file):
         super().__init__(row, col, file)
@@ -70,11 +71,11 @@ class Aki(Agent):
                     possible.append(map[row][col-1])
             if row < (len(map) - 1):
                 temp = (row + 1, col)
-                if temp not in possible:
+                if temp not in visited:
                     possible.append(map[row + 1][col])
             if col < (len(map[0]) - 1):
                 temp = (row, col + 1)
-                if temp not in possible:
+                if temp not in visited:
                     possible.append(map[row][col + 1])
             
             if not possible:
@@ -97,8 +98,8 @@ class Aki(Agent):
                 elem = possible.pop()
                 row = elem.row
                 col = elem.col
-                path.append(map[row][col])
-                visited.append((row, col))
+                path.append(map[elem.row][elem.col])
+                visited.append((elem.row, elem.col))
                 stack.extend(possible)
                 possible = []
             
@@ -107,6 +108,7 @@ class Aki(Agent):
         return path
 
 # A*
+# f = h + c
 class Bole(Agent):
     def __init__(self, row, col, file):
         super().__init__(row, col, file)
@@ -136,11 +138,11 @@ class Bole(Agent):
                     possible.append(mapa[row][col-1])
             if row < (len(mapa) - 1):
                 temp = (row + 1, col)
-                if temp not in possible:
+                if temp not in visited:
                     possible.append(mapa[row + 1][col])
             if col < (len(mapa[0]) - 1):
                 temp = (row, col + 1)
-                if temp not in possible:
+                if temp not in visited:
                     possible.append(mapa[row][col + 1])
 
             if not possible:
@@ -175,6 +177,7 @@ class Bole(Agent):
         return path
         
 # branch and bound
+# reverse cost and pick best path
 class Draza(Agent):
     def __init__(self, row, col, file):
         super().__init__(row, col, file)
@@ -204,11 +207,11 @@ class Draza(Agent):
                     possible.append(mapa[row][col-1])
             if row < (len(mapa) - 1):
                 temp = (row + 1, col)
-                if temp not in possible:
+                if temp not in visited:
                     possible.append(mapa[row + 1][col])
             if col < (len(mapa[0]) - 1):
                 temp = (row, col + 1)
-                if temp not in possible:
+                if temp not in visited:
                     possible.append(mapa[row][col + 1])
 
             if not possible:
@@ -227,7 +230,7 @@ class Draza(Agent):
                 
                 #sum - need to calculate number of non-blank tiles not in their goal position
                 queue.sort(key = lambda l: (sum(map(lambda tile: tile.cost(), l)), len(l), random.random()))
-
+                possible = []
                 current_list = queue.pop(0)
                 elem = current_list[-1]
                 row = elem.row
@@ -241,6 +244,7 @@ class Draza(Agent):
         return path
 
 # breadth first search
+# queue
 class Jocke(Agent):
     pass
     # def __init__(self, row, col, file):

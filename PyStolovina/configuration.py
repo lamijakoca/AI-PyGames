@@ -10,6 +10,8 @@ HEIGHT = None
 WIDTH = None
 SPEED = None
 
+TIME = [((255 * i) / 100, (255 * (100 - i)) / 100, 0) for i in range(101)]
+
 TILE_SIZE = None
 FONT = None
 RIBBON_HEIGHT = None
